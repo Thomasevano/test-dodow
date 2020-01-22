@@ -31,13 +31,10 @@
       id="zipcode"
       v-model="zipcode"
       :state="zipcodeValidation"
-      aria-describedby="zipcode-feedback"
-      trim
+      placeholder="Enter a correct zipcode: ***-****"
+      name="zipcode"
+      type="text"
     ></b-form-input>
-
-    <b-form-invalid-feedback id="zipcode-feedback">
-      Enter a correct zipcode: ***-****
-    </b-form-invalid-feedback>
   </div>
 </template>
 
@@ -45,23 +42,21 @@
   export default {
     computed: {
       nameState() {
-        return this.name.length > 2 ? true : false
+        return name.length > 2 ? true : false
       },
       zipcodeValidation() {
-        return (this.validZipcode(this.zipcode)) ? true : false
-      },
+        return (this.validZipcode(this.zipcode)) ? true : false;
+      }
     },
     data() {
       return {
         name: '',
-        city: null,
-        if (zipcode.length == 3){
-          zipcode: this.zipcode.value + '-'
+        city: '',
+        zipcode: '',
+        // if (zipcode.length === 3){
+        //   return zipcode: this.zipcode.value + '-';
+        // }
         }
-        else {
-          zipcode: ''
-        }
-      }
     },
     methods: {
     checkForm: function (e) {

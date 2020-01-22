@@ -1,22 +1,14 @@
 <template>
-  <div role="group">
-    <label for="input-live">Name:</label>
-    <b-form-input
-      id="input-live"
-      v-model="name"
-      :state="nameState"
-      aria-describedby="input-live-help input-live-feedback"
-      placeholder="Enter your name"
-      trim
-    ></b-form-input>
+  <form role="group"
+  @submit="checkForm"
+  >
 
-    <!-- This will only be shown if the preceding input has an invalid state -->
-    <b-form-invalid-feedback id="input-live-feedback">
-      Enter at least 3 letters
-    </b-form-invalid-feedback>
-
-    <!-- This is a form text block (formerly known as help block) -->
-    <b-form-text id="input-live-help">Your full name.</b-form-text>
+  <p v-if="errors.length">
+    <b>Veuillez corriger les erreurs suivantes</b>
+    <ul>
+      <li v-for="error in errors" :key="error">{{ error }}</li>
+    </ul>
+  </p>
 
     <label for="city">Ville</label>
     <b-form-input
@@ -25,70 +17,66 @@
       type="text"
       placeholder="Entrer une vile"
       name="city"
+      required
     ></b-form-input>
-    <label for="zipcode">code postal</label>
+    
+    <label for="zipcode">Code postal</label>
     <b-form-input
       id="zipcode"
       v-model="zipcode"
       :state="zipcodeValidation"
-      placeholder="Enter a correct zipcode: ***-****"
+      placeholder="Code postal"
       name="zipcode"
       type="text"
+      required
+      trim
+      v-on:keyup="zipcode.length === 3 ? zipcode += '-' : zipcode"
     ></b-form-input>
-  </div>
+    
+    <input
+      type="submit"
+      value="Submit"
+    >
+  </form>
 </template>
 
 <script>
   export default {
     computed: {
-      nameState() {
-        return name.length > 2 ? true : false
-      },
       zipcodeValidation() {
         return (this.validZipcode(this.zipcode)) ? true : false;
       }
     },
     data() {
       return {
-        name: '',
+        errors: [],
         city: '',
         zipcode: '',
-        // if (zipcode.length === 3){
-        //   return zipcode: this.zipcode.value + '-';
-        // }
-        }
+      }
     },
     methods: {
-    checkForm: function (e) {
-      this.errors = [];
+      checkForm: function (e) {
+        this.errors = [];
 
-      if (!this.city) {
-        this.errors.push("Vous devez entrer une ville.");
-      }
-      else if(this.validCity(this.city)) {
-        this.errors.push('Entrer une ville valide.');
-      }
-      if (!this.zipcode) {
-        this.errors.push('Vous devez entrer un code postal.');
-      }
-      else if (!this.validZipcode(this.zipcode)) {
-        this.errors.push('Valid zipcode required.');
-      }
+        if(!this.validCity(this.city)) {
+          this.errors.push('Entrer une ville valide.');
+        }
+        if (!this.validZipcode(this.zipcode)) {
+          this.errors.push('Entrer un code postal valide.');
+        }
+        else
+        alert('Bravo vous avez bien entrer votre ville:' + this.city + ' dont le code postal est le ' + this.zipcode)
 
-      if (!this.errors.length) {
-        return true;
+        e.preventDefault();
+      },
+      validZipcode: function (zipcode) {
+        var regex = /^\d{3}(?:[-]\d{4})?$/;
+        return regex.test(zipcode);
+      },
+      validCity: function(city) {
+        var regex = /[a-zA-Z0-9_]*$/;
+        return regex.test(city);
       }
-
-      e.preventDefault();
-    },
-    validZipcode: function (zipcode) {
-      var re = /^\d{3}(?:[-]\d{4})?$/;
-      return re.test(zipcode);
-    },
-    validCity: function(city) {
-      var re = /[a-zA-Z0-9_]*$/;
-      return re.test(city);
-    }
     }
   }
 </script>
